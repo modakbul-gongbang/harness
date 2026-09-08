@@ -70,6 +70,34 @@
       "prompt": "--verify. fixture에서 성공/실패/비대상/malformed 및 Stop 재진입/누락/stale/BLOCKED 모두 기대값과 일치. 실제 런타임 이벤트는 미실행.",
       "expected_output": "HOOK2는 fixture 범위 VERIFIED/PASS. 실제 활성 설정 증거 없는 HOOK1은 UNKNOWN. 실제 이벤트 기동 미확인 명시.",
       "files": []
+    },
+    {
+      "id": 11,
+      "name": "long-cohesive",
+      "prompt": "CLAUDE.md 350줄. 모든 지침이 공통 작업에 적용되며 중복/충돌/깨진 링크 없음.",
+      "expected_output": "길이만으로 FAIL 또는 강제 분할하지 않음. 유지 가능 조건 명시.",
+      "files": []
+    },
+    {
+      "id": 12,
+      "name": "short-conflict",
+      "prompt": "루트 40줄은 npm test, 하위 30줄은 pnpm test를 동일 작업의 필수 명령으로 지정. 팀 의도 미확인.",
+      "expected_output": "짧아도 충돌을 양쪽 근거로 제시. 임의로 한쪽 선택하지 않고 확인 필요 표시.",
+      "files": []
+    },
+    {
+      "id": 13,
+      "name": "split-import",
+      "prompt": "루트 50줄에서 @import로 공통 지침 300줄을 가져옴. 실제 토큰 측정 없음.",
+      "expected_output": "상시 후보 합산과 import 관계 표시. 지연 로딩/토큰 절약 성공으로 판정하지 않음.",
+      "files": []
+    },
+    {
+      "id": 14,
+      "name": "overfragmented",
+      "prompt": "같은 API 규칙이 8개 작은 파일에 분산되어 한 작업에 참조 5단계를 따라감. 기존 backend 가이드 있음.",
+      "expected_output": "새 Rules 추가를 강제하지 않음. 기존 가이드 통합 선택지와 유지 조건을 권장 말투로 설명.",
+      "files": []
     }
   ]
 }
