@@ -365,24 +365,25 @@ AskUserQuestion(
 
 ### 3-3.5. CLAUDE.md Structure (Progressive Disclosure)
 
-CLAUDE.md should stay lean — put stable rules in `docs/` and load conditionally with `@` refs.
+CLAUDE.md should stay lean — put stable rules in `docs/` and link with explicit reading conditions.
 
 ```markdown
 # {project}
 
 {3-5 lines: purpose, stack, directory map}
 
-## Context (loaded on demand)
-@docs/domain.md       # business terms, invariants
-@docs/policies.md     # team conventions, commit style
-@docs/architecture.md # decisions, boundaries
+## Context
+- Read `docs/domain.md` before changing business behavior.
+- Read `docs/policies.md` before commits or PRs.
+- Read `docs/architecture.md` before changing module boundaries.
 ```
 
-Rationale: monolithic CLAUDE.md inflates context every turn. `check-harness` axis 2 (C6) checks `conditional_load_evidence ≥ 1`. Keep the root file under ~80 lines.
+Rationale: keep root instructions short and make reading conditions explicit.
+`@import` loads with its parent CLAUDE.md; it organizes files but does not defer their context cost.
 
 ### 3-4. Skills Detection (auto-suggest + ask)
 
-**Start minimal.** Only scaffold skills that the L2 tech stack directly requires — dead skills pollute trigger matching (check-harness axis 1). Rule of thumb: *if you can't name 3 times you'd call it next week, don't scaffold it.*
+**Start minimal.** Only scaffold skills that the L2 tech stack directly requires — unused skills may add noise. Include a skill when its recurring or rare critical purpose is clear, not to meet a usage quota.
 
 Scan L2 decisions for recurring task patterns and suggest project-specific skills:
 
@@ -491,7 +492,7 @@ R2: "Test Infrastructure -- Framework setup with patterns matching the exemplar"
   R2.2: "Test directory structure mirrors source structure"
 
 R3: "Guard Rails -- CLAUDE.md + enforcement mechanisms for drift resistance"
-  R3.1: "CLAUDE.md (lean — under ~80 lines) with architectural rules, domain context, team conventions, dependency direction, file placement conventions, available project skills summary, and active hooks summary. Stable long-form content lives in `docs/` and loads via Progressive Disclosure `@docs/*.md` references."
+  R3.1: "CLAUDE.md (lean — under ~80 lines) with architectural rules, domain context, team conventions, dependency direction, file placement conventions, available project skills summary, and active hooks summary. Stable long-form content lives in `docs/` and is linked with explicit reading conditions."
   R3.2: "Linter + formatter configured with project-specific rules"
   R3.3: "CI pipeline running lint + typecheck + test"
   R3.4: ".env.example with all required environment variables documented"
@@ -657,13 +658,13 @@ AskUserQuestion(
 
 ### After Implementation: Establish Harness Baseline
 
-Once TF (verification) passes, suggest running `/check-harness` to establish a maturity baseline for the new project. This closes the scaffold → audit → compound loop.
+Once TF (verification) passes, suggest running `/check-harness` to establish a readiness baseline for the new project. This closes the scaffold → audit → compound loop.
 
 ```
 AskUserQuestion(
   question: "Run /check-harness now to baseline the new harness?",
   options: [
-    { label: "Yes, baseline now", description: "Audit axes 1-6 and save report to .harness/check-reports/" },
+    { label: "Yes, baseline now", description: "Check project readiness and save a Markdown report in a fresh temporary directory" },
     { label: "Skip", description: "Baseline later" }
   ]
 )

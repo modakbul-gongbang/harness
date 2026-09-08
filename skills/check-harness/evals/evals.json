@@ -3,23 +3,72 @@
   "evals": [
     {
       "id": 1,
-      "name": "default-scope-asks",
-      "prompt": "/check-harness",
-      "expected_output": "Phase 0에서 AskUserQuestion으로 스코프 묻고, 선택된 스코프에 맞는 서브에이전트를 병렬 실행 후 리포트 파일 생성",
+      "name": "java-configured-not-running",
+      "prompt": "Java Gradle 앱. JDK/wrapper 정상. jdtls plugin 활성, binary 존재. 실제 LSP 호출 미실행.",
+      "expected_output": "ENV1 PASS, TEST1은 Gradle을 인식. LSP1 PASS, LSP2 UNKNOWN/NOT_RUN. 설치를 기동 성공으로 표현하지 않음.",
       "files": []
     },
     {
       "id": 2,
-      "name": "overall-scope-explicit",
-      "prompt": "/check-harness overall — 내 클로드 코드 전체 설정 점검해줘. 어떤 스킬이 죽어있고 어떻게 일시키고 있는지 보고 싶어.",
-      "expected_output": "Per-Project 서브에이전트(CONTEXT, AUTOMATION)는 안 띄우고, Overall 2개(PORTFOLIO, SESSION)만 병렬 실행. 리포트에 Portfolio Health + Execution Pattern만 포함",
+      "name": "java-disabled-plugin",
+      "prompt": "Java 앱. jdtls binary는 있으나 plugin이 명시적으로 disabled.",
+      "expected_output": "LSP1 FAIL, 비활성 plugin을 활성화하도록 제안. LSP2 미확인. 자동 설치 없음.",
       "files": []
     },
     {
       "id": 3,
-      "name": "natural-language-trigger",
-      "prompt": "하네스 뭐가 부족한지 봐줘. 이 프로젝트 전체 진단으로.",
-      "expected_output": "트리거가 /check-harness를 부르고 'project' 또는 'all' 스코프로 판단. Per-Project 서브에이전트 실행 후 CLAUDE.md/rules/hooks 품질 리포트 포함",
+      "name": "minimal-project",
+      "prompt": "문서 전용 리포. CLAUDE와 링크 검사 명령 정상. MCP, Rules, Hook 없음.",
+      "expected_output": "불필요한 LSP/MCP/Hook은 N/A 이유 명시. Rules 개수로 감점 없음.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "broken-stop",
+      "prompt": "Stop hook 경로 없음. settings JSON은 유효. 실행하지 않음.",
+      "expected_output": "HOOK1 FAIL. HOOK2 NOT_RUN. 등록만으로 PASS 없음.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "name": "malformed-config",
+      "prompt": "settings.json 파싱 실패. 나머지는 조사 불가.",
+      "expected_output": "INVALID/FAIL 명시, 다른 미확인 항목 UNKNOWN/BLOCKED. 빈 설정 fallback 없음.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "name": "new-project",
+      "prompt": "Git 루트에 build.gradle.kts/gradlew는 있고 CLAUDE.md 없음.",
+      "expected_output": "프로젝트를 건너뛰지 않음. CTX1 FAIL. Gradle 검사 계속. 테스트 task와 소스가 아직 미확인이라 TEST1 UNKNOWN.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "name": "verify-unavailable",
+      "prompt": "Java plugin/binary/JDK 정상. --verify지만 이 세션에 LSP 도구 없음.",
+      "expected_output": "LSP1 PASS, LSP2 BLOCKED. grep으로 대체 PASS 금지.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "name": "stale-evidence",
+      "prompt": "검사 시작 후 Hook 파일이 변경됨. 이전 실행 PASS 보고서 존재.",
+      "expected_output": "해당 결과 UNKNOWN(stale), 이전 보고서 PASS 재사용 금지.",
+      "files": []
+    },
+    {
+      "id": 9,
+      "name": "scope-default",
+      "prompt": "/check-harness",
+      "expected_output": "project 기본, 사용자 대화 기록을 읽지 않음, 재질문/5-agent 호출 강제 없음.",
+      "files": []
+    },
+    {
+      "id": 10,
+      "name": "safe-hook-fixture",
+      "prompt": "--verify. fixture에서 성공/실패/비대상/malformed 및 Stop 재진입/누락/stale/BLOCKED 모두 기대값과 일치. 실제 런타임 이벤트는 미실행.",
+      "expected_output": "HOOK2는 fixture 범위 VERIFIED/PASS. 실제 활성 설정 증거 없는 HOOK1은 UNKNOWN. 실제 이벤트 기동 미확인 명시.",
       "files": []
     }
   ]

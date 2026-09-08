@@ -8,7 +8,7 @@ AI 에이전트가 잘 일하는 환경을 설계하는 기술 — Harness Engin
 
 | Skill | 설명 | 사용법 |
 |-------|------|--------|
-| **check-harness** | 현재 프로젝트의 Harness 성숙도를 5축 35개 체크리스트로 진단 | `/check-harness` |
+| **check-harness** | 현재 프로젝트의 개발 환경·LSP·Hook·검증을 근거로 종합 점검 | `/check-harness` |
 | **scaffold** | Greenfield 프로젝트에 AI-optimized 하네스 구조를 스캐폴딩 | `/scaffold` |
 | **specify** | 목표를 구조화된 구현 계획(spec.md)으로 변환 | `/specify "목표"` |
 | **deep-interview** | Socratic 방식의 요구사항 인터뷰 (Ambiguity Score 기반) | `/deep-interview "주제"` |
@@ -46,7 +46,7 @@ open materials/slides/viewer.html
 cd harness-session
 claude
 
-# 2. 현재 프로젝트의 하네스 성숙도 진단
+# 2. 현재 프로젝트의 하네스 준비 상태 점검
 /check-harness
 
 # 3. 새 프로젝트에 하네스 스캐폴딩
@@ -76,3 +76,28 @@ materials/                     # 세션 발표 자료
 ## License
 
 Internal use only.
+
+## 종합 점검 사용법
+
+다른 프로젝트에서 로컬 플러그인을 시험하려면 이 저장소의 절대경로로 `claude --plugin-dir /path/to/harness`를 실행한다.
+설치형 플러그인 호출은 `/harness-session:check-harness`, 이 저장소의 project skill 호출은 `/check-harness`다.
+
+- `/check-harness`: 현재 프로젝트의 런타임, LSP, 컨텍스트, 권한, Hook, 테스트/CI, 도구와 검증 절차를 읽기 중심으로 점검한다.
+- `/check-harness --verify`: 안전한 로컬 테스트/Hook fixture/LSP 조회로 동작 확인도 시도한다.
+- `/check-harness user`: 사용자 설치 인벤토리만 점검한다.
+- `/check-harness all`: 프로젝트와 사용자 인벤토리를 함께 점검한다.
+
+보고서는 각 항목의 필요성, 구성 상태, 실제 동작, 근거와 다음 조치를 보여준다.
+예를 들어 LSP 플러그인과 서버가 있어도 정의/참조 조회를 하지 않았다면 LSP 동작은 미확인이다.
+Hook도 등록과 fixture 실행, 실제 runtime 이벤트 확인을 구분한다.
+총점 대신 우선 조치 최대 3개와 미확인 항목을 제시하며 설치 개수로 평가하지 않는다.
+보고서는 매번 새 임시 디렉토리의 `report.md`에 저장하며 설정이나 gitignore를 바꾸지 않는다.
+
+현재 판정 계약은 [checklist](skills/check-harness/references/checklist.md), 설치·검증 방법과 공식 출처는 [probes](skills/check-harness/references/probes.md)에 있다.
+`materials/`의 성숙도 체크리스트는 강의 참고 자료이며 현재 스킬의 판정 기준이 아니다.
+
+### 변경 검증
+
+[evals](skills/check-harness/evals/evals.json)는 고정된 입력과 기대 판정 사례다.
+각 사례를 새 Claude 컨텍스트에서 SKILL 및 참조 문서와 함께 평가하고 기대 판정과 비교한다.
+이 평가는 지시 준수 smoke이며 실제 LSP/Hook 기동이나 전체 프로젝트 감사의 대체 증거가 아니다.
