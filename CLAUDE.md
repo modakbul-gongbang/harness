@@ -1,6 +1,6 @@
 # harness-session
 
-Harness Engineering 세션을 위한 Claude Code 플러그인.
+Harness Engineering 세션을 위한 Claude Code 스킬 모음과 선택적 플러그인.
 수강생들이 실습하고 참고할 수 있는 스킬, 훅, 발표 자료를 포함한다.
 
 ## Project Structure
@@ -23,6 +23,8 @@ materials/          # 세션 발표 자료
 ## Development Guidelines
 
 - Skills: one directory per skill in `skills/{name}/SKILL.md`
+- Direct installation: `npx skills add` copies each skill folder independently; keep required references inside that folder and resolve them relative to SKILL.md.
+- Direct skill installation does not register root agents, hooks, permissions, MCP, or LSP.
 - Hooks: register in `hooks/hooks.json`, implement in `scripts/`
 - Hook scripts use `${CLAUDE_PLUGIN_ROOT}` for paths
 - Version in `plugin.json` is the source of truth

@@ -1,6 +1,7 @@
 # harness-session
 
-**Harness Engineering** 세션을 위한 Claude Code 플러그인.
+**Harness Engineering** 세션을 위한 Claude Code 스킬과 실습 자료.
+플러그인 없이 필요한 스킬만 바로 설치할 수 있으며, 기존 플러그인 방식도 지원한다.
 
 AI 에이전트가 잘 일하는 환경을 설계하는 기술 — Harness Engineering의 핵심 개념을 실습하고, 바로 써볼 수 있는 스킬과 자료를 제공한다.
 
@@ -39,32 +40,90 @@ HTML 슬라이드 50장 + `viewer.html`로 로컬에서 바로 열어볼 수 있
 open materials/slides/viewer.html
 ```
 
-## Quick Start
+## 설치하고 바로 사용하기
+
+[grab-skills](https://github.com/yansfil/grab-skills)의 설치 방식처럼 [skills CLI](https://github.com/vercel-labs/skills)를 사용한다.
+Node.js와 `npx`, Claude Code가 필요하다.
+
+### 현재 프로젝트에 설치 (권장)
+
+사용할 프로젝트 폴더에서 실행한다.
+기존에 같은 이름의 스킬이 있다면 설치 전에 내용을 비교하고 백업한다.
 
 ```bash
-# 1. 이 플러그인이 있는 디렉토리에서 Claude Code 실행
-cd harness-session
+npx --yes skills add modakbul-gongbang/harness --skill check-harness --agent claude-code --copy
 claude
-
-# 2. 현재 프로젝트의 하네스 준비 상태 점검
-/check-harness
-
-# 3. 새 프로젝트에 하네스 스캐폴딩
-/scaffold
-
-# 4. 요구사항이 불명확할 때 인터뷰
-/deep-interview 뭘 만들어야 할지 모르겠어
-
-# 5. 목표를 구현 계획으로 변환
-/specify "사용자 인증 시스템 구현"
 ```
+
+새 Claude Code 세션에서 호출한다.
+
+```text
+/check-harness
+/check-harness --verify
+```
+
+`.claude/skills/check-harness/`에 SKILL.md와 참조 문서가 함께 복사된다.
+`--agent claude-code`는 설치 대상을 Claude Code로 한정한다.
+설치기는 버전 추적용 `skills-lock.json`도 생성할 수 있다.
+프로젝트 설치 파일은 팀 공유가 필요하면 lock 파일과 함께 Git에 포함한다.
+
+### 다른 스킬 또는 모든 프로젝트에서 사용
+
+```bash
+# 설치 가능한 스킬 목록만 확인
+npx --yes skills add modakbul-gongbang/harness --list
+
+# 원하는 스킬 선택
+npx --yes skills add modakbul-gongbang/harness --skill specify --agent claude-code --copy
+
+# 모든 스킬을 Claude Code에만 설치
+npx --yes skills add modakbul-gongbang/harness --skill '*' --agent claude-code --copy
+
+# check-harness를 사용자 범위에 설치해 모든 프로젝트에서 사용
+npx --yes skills add modakbul-gongbang/harness --skill check-harness --agent claude-code --copy -g
+```
+
+사용자 설치 위치는 `~/.claude/skills/check-harness/`다.
+업데이트는 같은 설치 명령을 다시 실행하고 새 세션을 시작한다.
+복사 설치이므로 이 저장소를 `git pull`하는 것만으로 설치된 스킬이 갱신되지는 않는다.
+제거할 때는 설치한 범위의 해당 스킬 폴더만 삭제한다.
+
+### npx 없이 수동 설치
+
+저장소를 clone한 뒤, 사용할 프로젝트에서 스킬 폴더 전체를 복사해도 된다.
+아래 `harness` 경로는 실제 clone 위치로 바꾼다.
+
+```bash
+git clone https://github.com/modakbul-gongbang/harness.git /path/to/harness
+mkdir -p .claude/skills
+# 기존 설치가 있으면 중단하여 덮어쓰기를 방지한다.
+test ! -e .claude/skills/check-harness && test ! -L .claude/skills/check-harness && cp -R /path/to/harness/skills/check-harness .claude/skills/check-harness
+```
+
+### 설치 범위와 플러그인 방식
+
+직접 설치는 **스킬과 그 폴더의 참조 파일**을 설치한다.
+저장소의 `agents/`, `hooks/hooks.json`, 권한 설정, MCP, LSP 서버는 설치하지 않는다.
+`check-harness`는 별도 사용자 정의 agent 없이 직접 조사할 수 있다.
+다른 스킬이 요구하는 브라우저 도구 등의 실행 의존성은 각 SKILL.md를 확인한다.
+현재 `hooks/hooks.json`은 빈 템플릿이며 자동으로 활성화할 Hook은 없다.
+
+기존 플러그인 방식은 `claude --plugin-dir /path/to/harness`로 사용할 수 있다.
+직접 설치 호출은 `/check-harness`, 플러그인 호출은 `/harness-session:check-harness`다.
+중복 노출을 피하려면 한 방식을 선택한다.
+이 저장소 자체에서 실습할 때는 clone한 폴더에서 `claude`를 실행하면 된다.
+
+명령이 보이지 않으면 새 세션에서 `/` 목록과 설치 경로의 `SKILL.md`를 확인한다.
+참조 파일을 못 찾으면 SKILL.md 한 파일만 복사하지 않았는지 확인한다.
+개인 스킬과 프로젝트 스킬에 같은 이름이 있다면 적용 범위를 확인한다.
+직접 스킬 경로와 지원 파일 구성은 [Claude Code 공식 문서](https://code.claude.com/docs/en/skills)를 따른다.
 
 ## Project Structure
 
 ```
 .claude-plugin/plugin.json    # Plugin manifest
 skills/
-  check-harness/SKILL.md      # Harness 성숙도 진단
+  check-harness/SKILL.md      # 개발 준비 상태 종합 점검
   scaffold/SKILL.md            # 프로젝트 스캐폴딩
   specify/SKILL.md             # Goal → spec.md
   deep-interview/SKILL.md     # Socratic 인터뷰
@@ -108,3 +167,10 @@ CLAUDE.md, 하위 CLAUDE.md, Rules와 연결된 가이드의 길이·역할·적
 중복, 충돌, 깨진 참조, 과도한 분할을 확인하고 현재 구조를 유지해도 되는 조건과 함께 개선을 권장한다.
 긴 파일이나 Rules 부재 자체를 실패로 판정하지 않는다.
 종합 리뷰는 잘 된 점과 권장 개선을 먼저 보여주며 상세 PASS/FAIL 근거는 부록에 남긴다.
+
+### 직접 설치 검증
+
+2026-09-09에 빈 임시 프로젝트에서 위 GitHub 설치 명령을 `-y`로 실행해 성공했다.
+SKILL.md와 세 참조 문서가 원격 원본과 일치하는 실제 파일로 복사됨을 확인했다.
+Codex 설치 폴더와 Claude settings.json은 생성되지 않았다.
+플러그인·스킬 형식 검사는 통과했으며, 이 설치 smoke에서 실제 종합 점검이나 LSP·Hook 기동까지 실행하지는 않았다.

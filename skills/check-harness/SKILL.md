@@ -36,6 +36,8 @@ Git이 없으면 가장 가까운 build manifest 디렉토리, 그것도 없으�
 CLAUDE.md가 없는 신규 프로젝트도 점검 대상이다.
 명시 경로가 없거나 접근 불가하면 BLOCKED로 끝내고 다른 프로젝트로 대체하지 않는다.
 
+아래 참조 경로는 감사 대상 프로젝트의 cwd가 아니라 이 SKILL.md가 로드된 스킬 디렉토리를 기준으로 해석한다.
+직접 설치와 플러그인 설치 모두 같은 폴더 안의 참조 파일을 사용하며 저장소 루트나 별도 agent 설치를 요구하지 않는다.
 `references/checklist.md`, `references/probes.md`를 읽는다.
 컨텍스트 문서를 검토할 때는 `references/context-review.md`를 추가로 읽는다.
 언어, 프로젝트 성격, build manifest, 팀 지침으로 각 항목의 필요성을 먼저 결정한다.
