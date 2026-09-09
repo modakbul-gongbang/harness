@@ -3,13 +3,13 @@
 **Harness Engineering** 세션을 위한 Claude Code 스킬과 실습 자료.
 플러그인 없이 필요한 스킬만 바로 설치할 수 있으며, 기존 플러그인 방식도 지원한다.
 
-AI 에이전트가 잘 일하는 환경을 설계하는 기술 — Harness Engineering의 핵심 개념을 실습하고, 바로 써볼 수 있는 스킬과 자료를 제공한다.
+AI 에이전트가 잘 일하는 환경을 설계하는 기술 - Harness Engineering의 핵심 개념을 실습하고, 바로 써볼 수 있는 스킬과 자료를 제공한다.
 
 ## Skills
 
 | Skill | 설명 | 사용법 |
 |-------|------|--------|
-| **check-harness** | 현재 프로젝트의 개발 환경·LSP·Hook·검증을 근거로 종합 점검 | `/check-harness` |
+| **check-harness** | 개발 환경·컨텍스트·Hook·검증 체계 종합 점검 + 근거 기반 개선 권장 | `/check-harness` |
 | **scaffold** | Greenfield 프로젝트에 AI-optimized 하네스 구조를 스캐폴딩 | `/scaffold` |
 | **specify** | 목표를 구조화된 구현 계획(spec.md)으로 변환 | `/specify "목표"` |
 | **deep-interview** | Socratic 방식의 요구사항 인터뷰 (Ambiguity Score 기반) | `/deep-interview "주제"` |
@@ -20,19 +20,21 @@ AI 에이전트가 잘 일하는 환경을 설계하는 기술 — Harness Engin
 
 `materials/harness-checklist.md`
 
-AI가 잘 일하는 환경을 설계하기 위한 자가진단 체크리스트. 3단계 성숙도(L1 시작하기 → L2 내 것으로 만들기 → L3 자율 운영)로 나뉘며, 5개 축에 걸쳐 35개 항목을 점검한다.
+강의에서 하네스 설계 개념을 설명하기 위한 자가진단 참고 자료다.
+현재 `/check-harness`의 실행 기준이나 결과 점수표가 아니다.
+스킬의 점검 절차는 [SKILL.md](skills/check-harness/SKILL.md), 항목별 판정 기준은 [checklist.md](skills/check-harness/references/checklist.md)를 따른다.
 
-- **준비 (Scaffolding)** — AI가 프로젝트를 스스로 파악할 수 있는가
-- **맥락 (Context)** — CLAUDE.md, 규칙, 점진적 노출
-- **실행 설계 (Execution)** — 계획, 위임, 오케스트레이션
-- **검증 (Verification)** — 테스트, 리뷰, 품질 관리
-- **개선 (Improvement)** — 학습, 피드백 루프
+- **준비 (Scaffolding)** - AI가 프로젝트를 스스로 파악할 수 있는가
+- **맥락 (Context)** - CLAUDE.md, 규칙, 점진적 노출
+- **실행 설계 (Execution)** - 계획, 위임, 오케스트레이션
+- **검증 (Verification)** - 테스트, 리뷰, 품질 관리
+- **개선 (Improvement)** - 학습, 피드백 루프
 
 ### 발표 슬라이드
 
 `materials/slides/`
 
-"Harness Engineering — AI가 잘 일하는 환경을 설계하는 기술" 세션 발표 자료.
+"Harness Engineering - AI가 잘 일하는 환경을 설계하는 기술" 세션 발표 자료.
 HTML 슬라이드 50장 + `viewer.html`로 로컬에서 바로 열어볼 수 있다.
 
 ```bash
@@ -104,7 +106,8 @@ test ! -e .claude/skills/check-harness && test ! -L .claude/skills/check-harness
 
 직접 설치는 **스킬과 그 폴더의 참조 파일**을 설치한다.
 저장소의 `agents/`, `hooks/hooks.json`, 권한 설정, MCP, LSP 서버는 설치하지 않는다.
-`check-harness`는 별도 사용자 정의 agent 없이 직접 조사할 수 있다.
+`check-harness`는 직접 조사하는 것이 기본이며 서브에이전트 호출은 필수가 아니다.
+저장소의 agent 파일 수는 점검 시 호출하는 에이전트 수를 뜻하지 않는다.
 다른 스킬이 요구하는 브라우저 도구 등의 실행 의존성은 각 SKILL.md를 확인한다.
 현재 `hooks/hooks.json`은 빈 템플릿이며 자동으로 활성화할 Hook은 없다.
 
