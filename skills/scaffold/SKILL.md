@@ -1,12 +1,11 @@
 ---
 name: scaffold
 description: |
-  Greenfield project architecture + harness scaffolding for AI Agent productivity.
-  Interview-driven decisions -> markdown spec output.
-  Produces: Code Structure (vertical slice exemplar), Test Infrastructure, Guard Rails,
-  conditional extensions, AND Harness (CLAUDE.md with domain/team context, rules, skills, hooks).
-  L2: architecture decisions, L3: harness setup, L4: unified plan (requirements + tasks).
-  Use when: "/scaffold", "scaffold", "new project", "set up project", "프로젝트 세팅", "초기 구조"
+  Design and optionally build a new project's architecture and AI work environment.
+  Select a stack and dependencies, plan a working reference flow, and configure
+  project instructions, verification, and useful skills/hooks.
+  Use for "/scaffold", "new project setup", "프로젝트 세팅", or "초기 구조".
+  Existing projects require an explicit adaptation scope, not automatic reinitialization.
 allowed-tools:
   - Read
   - Grep
@@ -17,695 +16,349 @@ allowed-tools:
   - Edit
   - Agent
   - AskUserQuestion
+  - WebSearch
+  - WebFetch
 ---
 
-# /scaffold — Greenfield Architecture Scaffolding
+# /scaffold - Architecture and Harness Scaffolding
 
-Generate a scaffold spec through an architecture-focused derivation chain.
-Produces a complete development foundation that AI agents can extend consistently.
+Build a foundation that the next feature can extend consistently.
+The highest-value output is one agreed, working reference flow, not an empty directory tree.
 
-All outputs are written as **markdown files** — no external CLI dependencies.
+The workflow is L0 Goal -> L1 Environment -> L2 Architecture -> L3 Harness -> L4 Plan -> optional implementation and verification.
+Planning and verification reports are Markdown.
+Implementation produces actual source and configuration using the selected project tools; there is no separate scaffold CLI dependency.
 
----
+Use the user's language.
+Reuse answers and authorization already provided.
+The layers are review checkpoints, not mandatory repeated permission questions.
+Ask only about unresolved choices that materially affect the result.
+For a small project, combine the proposed architecture, harness, and tasks into one review.
+A request to plan only must end at the plan; a request to implement may proceed within its established scope.
 
-## Core Identity
+## Before Writing
 
-scaffold is specify's **architecture variant**. Same structure, different weight center.
+Confirm the target directory from the request and inspect it before creating output.
+Read applicable project instructions, manifests, wrappers/lockfiles, existing harness files, and Git status without reading secret values.
+Do not treat an existing repository as empty merely because it lacks application code.
 
-| | specify | scaffold |
-|---|---------|----------|
-| Focus | What to build (features) | How to structure (architecture + harness) |
-| L2 weight | Moderate (feature decisions) | **Heavy** (tech stack, patterns, infra) |
-| L3 | Requirements (behavioral) | **Harness** (domain, team, skills, hooks, rules) |
-| L4 | Tasks | **Plan** (requirements + tasks unified) |
-| Tasks | Feature implementation | Project initialization + exemplar + harness |
-| Output | Code changes | Complete development environment + AI harness |
-| When | Feature on existing codebase | Greenfield or major restructure |
+- **New project:** create `scaffold-spec.md` after confirming the goal.
+  Create a target directory only within the requested scope.
+- **Existing project:** preserve the current stack, code, configuration, and unrelated user changes.
+  For harness-only work, adapt the existing project without running an initializer or replacing its architecture.
+  For restructuring, first record the current behavior, working verification commands, and explicitly agreed migration scope.
+  If that scope is unclear, ask before planning a replacement.
+- **Audit-only request:** use `/check-harness` if installed, or perform a read-only assessment.
+  The sibling skill is optional and must not be assumed to exist.
+- **Existing spec:** read and resume it when it represents the same goal.
+  For a different goal, use a distinct output path rather than overwriting the previous work.
 
----
+Keep all required references within this skill folder.
+Direct skill installation does not install repository-root hooks, agents, permissions, MCP, or LSP.
 
-## Output Format
+## Output
 
-All layer results are written as sections in a single markdown file:
-
-```
-{project_dir}/scaffold-spec.md
-```
-
-The file accumulates as each layer completes. Structure:
+Accumulate decisions in `{project_dir}/scaffold-spec.md`:
 
 ```markdown
-# Scaffold Spec: {project name}
-
+# Scaffold Spec: {project}
 Created: {date}
 Goal: {one-line goal}
+Status: {planning / ready / implementing / verified / blocked}
 
 ## L0: Goal
-...
+## L1: Environment
+## L2: Architecture Decisions
+## L3: Harness Setup
+## L4: Plan
+```
+
+Use the actual chosen filename when resuming or keeping multiple specs.
+After implementation, write `scaffold-verification.md` beside the spec, or a correspondingly distinct report name.
+Do not produce a completion report merely because a plan was approved.
+
+## L0: Goal
+
+Confirm the product purpose, foundation scope, and the smallest complete reference flow.
+Reflect existing answers instead of asking for confirmation again.
+Ask about missing consequential requirements before deciding them.
+
+Record:
+
+- Confirmed goal and intended users.
+- Reference flow and observable success/failure outcomes.
+- Non-goals: product features beyond that flow, production deployment unless explicitly included, and other agreed exclusions.
+- Existing-project adaptation or migration boundaries, if applicable.
+
+Do not infer a separate frontend, API server, database, or deployment from a product name alone.
+For a TODO app, establish persistence and UI needs first.
+A server-rendered Spring app may fit without a separate Node app.
+A CLI need not acquire a web server or database.
+
+The reference flow may contain enough business behavior to prove the foundation.
+Do not exclude all feature behavior and then require an untestable empty exemplar.
 
 ## L1: Environment
-...
+
+Inspect only tools relevant to the goal and existing project.
+
+| Target | Evidence | Interpretation |
+|--------|----------|----------------|
+| Project and team choices | Instructions, manifests, build files, existing code | Existing constraints take priority over installed tooling |
+| Runtime | Required version vs actual executable/version | For Java, check JDK and compiler; Node availability does not select Node |
+| Build and dependency management | Gradle/Maven wrapper, BOM, lockfile, package scripts as applicable | Use the chosen ecosystem's conventions |
+| Services, when needed | Actual availability of DB, Docker daemon, or other required service | An installed CLI alone does not prove usability |
+| Git and platform | Worktree state, OS, paths, shell requirements | Preserve user work and account for actual platform constraints |
+| Existing harness | Instructions, rules, skills, hooks, verification/CI commands | Extend what already works; do not create competing workflows |
+
+Separate **observed**, **required but missing**, and **not checked**.
+An unavailable required tool becomes a setup task or blocker; it is not permission to change stacks.
+Record commands and relevant results without secret values.
 
 ## L2: Architecture Decisions
-...
+
+### Resolve Relevant Choices
+
+Consider each dimension, but ask only about unresolved choices affecting the agreed scope.
+There is no question quota or weighted score to fill.
+A dimension may be N/A with a reason.
+
+| Dimension | Relevant choices |
+|-----------|------------------|
+| Tech stack | Language/runtime, framework, build/package tool, supported versions |
+| Communication | Actual consumers, transport, API/type contract and ownership |
+| Data and state | Persistence, database, access library, migrations and test data |
+| Testing | Observable outcomes, stable test boundaries, repeatable verification command |
+| Environment | Local start, configuration, CI, required services and deployment constraints |
+
+Prioritize questions by consequence: data loss and incompatible consumers matter more than optional formatting preferences.
+Ask one or two concrete questions at a time, with a recommended option and its material tradeoff.
+Offer agent-owned decisions when useful.
+Record delegated decisions as `assumed: true`, not as user-confirmed facts.
+Do not invent product policies such as retention, permissions, or payment behavior.
+
+Use these decision states:
+
+- **Confirmed:** explicitly supplied by the user.
+- **Project-derived:** supported by a file path or existing behavior.
+- **Delegated:** chosen within the user's delegation, with rationale.
+- **N/A:** not applicable, with reason.
+- **Deferred:** excluded optional work, or an unresolved required decision explicitly marked as blocking.
+
+Carry settled choices forward.
+A deferred optional feature stays outside this scaffold.
+An unresolved choice needed by the reference flow blocks implementation readiness.
+
+### Architecture and Dependency Selection
+
+Use this order: explicit requirements and team constraints, existing project conventions/dependencies, then established framework solutions.
+Choose the simplest structure that supports the actual behavior.
+Do not add layers, services, repositories, code generation, or packages just for symmetry.
+
+For a new project, prefer a suitable official initializer or maintained starter over inventing its build setup.
+For an existing project, adapt its existing build instead of reinitializing it.
+
+Before selecting or adding a dependency:
+
+1. Name the requirement it satisfies and check whether the framework or an existing dependency already provides it.
+2. Consult current official documentation or registry metadata for runtime/framework compatibility, maintenance/support, and relevant license constraints.
+   Use available web or package tooling and record source URLs and the checked date.
+   Do not claim compatibility from memory.
+3. Explain the material tradeoff and why an additional package is needed.
+   Avoid a catalog of alternatives when the team's existing choice already fits.
+4. Follow the ecosystem's wrapper, dependency management/BOM, and lockfile conventions.
+   Resolve dependencies and build during implementation; version selection alone is not proof of compatibility.
+
+If sources cannot be reached, retain established versions where possible and mark new compatibility decisions unverified.
+A required unverified choice remains an implementation-readiness blocker.
+Do not replace an established stack with an easier-to-install one.
+
+Prefer reusable framework behavior for logging, configuration, and errors.
+Add custom shared modules only where there is actual behavior the framework does not supply.
+Use observable test outcomes and real owned boundaries; fake genuinely external systems only when necessary.
+Choose API contracts for actual consumer needs, not a universal preference for schema-first or code generation.
+
+### Conditional Extensions
+
+| Requirement | Extension |
+|-------------|-----------|
+| Explicit shared-contract need or multiple consumers needing synchronization | Type contracts using the chosen framework strategy |
+| Persistent data | Data connection, schema/migrations, isolated test data and seed policy |
+| Reproducible service environment needing containers | Docker/Compose; check availability separately |
+| Long-running service | Appropriate health and shutdown behavior, preferably framework-native |
+
+Record decisions, evidence, tradeoffs, assumptions, activated extensions, and known gaps.
+Check the most consequential decision against a concrete failure scenario, such as restart losing required persistent data.
+Ask a follow-up only if it exposes an unresolved requirement.
+Present the resulting architecture for review when prior authorization does not already cover the decisions.
 
 ## L3: Harness Setup
-...
+
+### Context and Instructions
+
+Use existing domain terms, business rules, and team conventions.
+Ask only for missing ones that affect the agreed work.
+Do not infer unknown business policies from the stack or create generic policy documents to fill a template.
+
+Keep the root CLAUDE.md a concise map:
+
+- Purpose, stack, and meaningful directory boundaries.
+- Actual start and verification commands.
+- Important project constraints and links with explicit reading conditions.
+- Selected project workflows, skills, and hooks when useful.
+
+Example reading conditions:
+
+```markdown
+- Read docs/guides/backend.md before changing Java behavior.
+- Read docs/architecture.md before changing module boundaries.
+```
+
+Create only guides that have meaningful content and are needed by the work.
+Reuse existing guides as the single source instead of duplicating their rules.
+Length is a maintenance target, not a pass/fail threshold.
+`@import` loads with its parent CLAUDE.md; it organizes files without deferring their context cost.
+
+CLAUDE.md and Rules provide model context, not mechanical enforcement.
+Use an appropriate Hook, permission setting, linter, or CI check for a constraint that needs an executable boundary.
+Keep shared instructions in the root, directory context in local CLAUDE.md files when useful, and cross-directory file-type guidance in path-scoped Rules.
+Do not create one file per constraint.
+
+Example `.claude/rules/java.md`:
+
+```markdown
+---
+paths:
+  - "src/**/*.java"
+---
+Read docs/guides/backend.md before changing Java behavior.
+```
+
+Rules without `paths` load unconditionally.
+Only reference documents that exist or are included in the implementation plan.
+
+### Skills, Hooks, Tools, and Review
+
+Start minimal.
+Suggest a skill only when its recurring or rare critical purpose is clear, for example a project-specific migration or webhook test procedure.
+A frontend framework does not by itself require a component-generator skill.
+Docker does not imply deployment, and a CLI does not imply publication.
+Do not add release/deploy workflows outside the agreed scope.
+
+Before planning hooks or verification tasks, read [references/verification.md](references/verification.md).
+Choose hooks for actual failure modes, not for every installed tool.
+
+| Need | Candidate mechanism |
+|------|---------------------|
+| Format changed source | PostToolUse running the configured formatter on the affected supported path |
+| Full build/typecheck/test | Common verification command used locally and in CI; optional bounded completion gate |
+| Relevant guidance at a known failure point | Narrow path/tool-specific context reminder |
+| Sensitive operations | Appropriate permissions/sandbox plus narrowly scoped checks when needed |
+
+Do not run a full-project typecheck or autofix after every edit by default.
+Do not block a placeholder-only `.env.example` together with secret-bearing files, or prevent legitimate package-manager lockfile updates.
+An Edit/Write path check does not protect Bash or every other tool; state its actual scope.
+
+Reuse the team's implementation and review workflow.
+Offer independent verification when the team requires it or risk justifies it.
+The verifier reads the same requirements/guides and performs checks, rather than endorsing the implementer's report.
+A reviewer file alone is not proof of independent verification.
+
+Consider LSP for Java definition/reference lookup and a browser CLI or MCP for actual UI verification when relevant.
+Record the need, setup, and operation check; do not universally install agents, MCP, LSP, or Stop gates.
+Keep setup project-scoped unless user/global changes were requested.
+Distinguish configuration, startup, and successful tool operation.
+
+Record the selected instructions, skills, hooks, tools, common verification command, and review responsibilities.
+Explain meaningful omissions.
+Combine these into the L3 summary rather than asking for approval on every artifact.
+Do not expand existing authorization to publishing, production changes, or unrelated global setup.
 
 ## L4: Plan
-...
-```
 
----
-
-## Layer Flow
-
-| Layer | What | Gate |
-|-------|------|------|
-| L0 | Mirror -> confirmed_goal, non_goals | User confirms mirror |
-| L1 | Environment scan (greenfield detection) | Auto-advance |
-| L2 | **Architecture interview** -> decisions + constraints (HEAVY) | User approval |
-| L3 | **Harness setup** -> domain, team, rules, skills, hooks | User approval |
-| L4 | **Plan** -> requirements + tasks (unified from L2+L3) | User approval |
-
-### Session Init (before L0)
-
-Determine the project name from the user's goal. Create the output file:
-
-```bash
-touch {project_dir}/scaffold-spec.md
-```
-
----
-
-## L0: Goal
-
-**Output**: Goal section in scaffold-spec.md
-
-### Mirror Protocol
-
-Mirror the user's goal with scaffold-specific framing:
-
-```
-"I understand you want to build [product/system].
- Architecture scope: [what the scaffold will set up].
- NOT in scaffold scope: [features, business logic -- those come later via /specify].
- Done when: [agent can extend the codebase consistently].
- Does this match?"
-```
-
-**Key distinction**: scaffold's goal is the **foundation**, not the product. If user says "I want to build a todo app", the scaffold goal is "Set up a web application foundation (server + client + DB) that an agent can extend to build features like a todo app."
-
-### Write to spec
-
-After user confirms, write the L0 section:
-
-```markdown
-## L0: Goal
-
-**Confirmed Goal**: Set up a [framework] foundation with [key patterns] that an agent can extend to build [product] features
-
-**Non-Goals**:
-- Feature implementation
-- Production deployment
-- [other non-goals from discussion]
-```
-
-### Gate
-
-User confirms mirror -> advance to L1.
-
----
-
-## L1: Environment Scan
-
-**Output**: Environment section in scaffold-spec.md
-
-Unlike specify's L1 (which scans existing code), scaffold's L1 scans the **environment**:
-
-### Scan Targets
-
-| Target | How | Why |
-|--------|-----|-----|
-| Working directory | `ls -la`, check for existing files | Greenfield confirmation |
-| Package managers | `which npm`, `which yarn`, `which pnpm`, `which bun` | Available tooling |
-| Runtime versions | `node -v`, `python3 --version`, `go version`, etc. | Compatibility constraints |
-| Docker | `docker --version`, `docker compose version` | Infra capability |
-| Git | `git status` | Repo state |
-| OS/platform | `uname -a` | Platform constraints |
-
-### Write to spec
-
-```markdown
-## L1: Environment
-
-- **Directory**: empty (greenfield confirmed) / has existing files
-- **Node**: v22.x, pnpm available
-- **Docker**: installed, compose v2
-- **Git**: initialized, clean
-- **Platform**: macOS ARM64
-```
-
-### Gate
-
-Auto-advance to L2 (no user approval needed).
-
----
-
-## L2: Architecture Decisions (HEAVY)
-
-**Output**: Decisions section in scaffold-spec.md
-
-This is scaffold's core. The interview determines the entire project architecture.
-
-### Step 0: Checkpoint Generation
-
-Read L1 environment scan + confirmed goal, then generate checkpoints per **architecture dimension**.
-
-**Complexity classification** -- based on confirmed goal:
-
-| Signal | Examples |
-|--------|----------|
-| Client-server boundary | web app, mobile + API, microservices |
-| Multiple data stores | DB + cache + queue |
-| Real-time communication | WebSocket, SSE, polling |
-| External service integration | payment, auth provider, AI API |
-| Multi-environment deployment | dev/staging/prod, Docker |
-| Background processing | workers, cron, queues |
-
-- **Simple** (0-1 signals) -> 2-3 per dimension
-- **Medium** (2-3 signals) -> 4-5 per dimension
-- **Complex** (4+ signals) -> 6-8 per dimension
-
-### Architecture Dimensions
-
-| # | Dimension | Weight | Example Checkpoints |
-|---|-----------|--------|-------------------|
-| 1 | **Tech Stack** | 25% | Language/runtime, framework, package manager |
-| 2 | **Communication** | 20% | Client-server protocol, API style, type safety strategy |
-| 3 | **Data & State** | 20% | Database choice, ORM/query builder, migration strategy, caching |
-| 4 | **Testing** | 15% | Test framework, test patterns, coverage strategy |
-| 5 | **DevOps & Environment** | 20% | Containerization, CI/CD, env config, deployment target |
-
-**L1 Auto-Resolve**: Check each checkpoint against environment scan. Node installed -> resolve "runtime" checkpoint. Docker available -> partially resolve containerization.
-
-### Interview Loop (score-driven)
-
-Each round:
-1. **Score** -- coverage per dimension
-2. **Target** -- lowest-scoring dimension(s)
-3. **Ask** -- 2 scenario questions targeting those checkpoints (via AskUserQuestion)
-4. **Resolve** -- mark covered, record decisions
-5. **Scan** -- detect cross-decision tensions
-6. **Display** -- scoreboard
-
-**Question format -- RIGHT (concrete scenario):**
-```
-AskUserQuestion(
-  question: "Your API needs to serve both a React frontend and a future mobile app. How should client-server communication work?",
-  options: [
-    { label: "REST + OpenAPI + code-gen", description: "OpenAPI spec -> Orval/openapi-typescript. Type-safe, well-tooled." },
-    { label: "tRPC", description: "End-to-end type safety, no code-gen. TypeScript only." },
-    { label: "GraphQL", description: "Flexible queries, schema-first. Higher complexity." },
-    { label: "Agent decides", description: "Let scaffold choose based on project context" }
-  ]
-)
-```
-
-**"Agent decides" handling**: When user selects this, scaffold makes an opinionated choice based on:
-1. L1 environment capabilities
-2. Decisions already made (consistency)
-3. Project complexity (simpler for simple projects)
-4. Agent productivity criteria (prefer type-safe, convention-over-config)
-
-Record as decision with `assumed: true`.
-
-### Agent Productivity Bias
-
-When making or recommending decisions, bias toward the 4 quality criteria:
-
-| Criteria | Bias |
-|----------|------|
-| Agent extensibility | Prefer convention-over-config, clear naming, predictable patterns |
-| Testability | Prefer dependency injection, pure functions, mockable boundaries |
-| Drift resistance | Prefer strict linting, type checking, boundary enforcement |
-| Type-safe communication | Prefer code-gen over manual types, schema-first over code-first |
-
-### Conditional Extension Detection
-
-During the interview, detect which conditional extensions to activate:
-
-| Signal from Interview | Extension Activated |
-|----------------------|-------------------|
-| Client-server boundary detected | **Type Contracts** (OpenAPI/tRPC/GraphQL schema) |
-| Database mentioned or implied | **Data Layer** (migrations, connection, seed) |
-| Docker available + multi-service | **Docker/Infra** (compose, Dockerfile) |
-| Long-running server process | **Runtime Patterns** (health check, graceful shutdown) |
-
-### Termination
-
-Composite score uses **weighted average** across dimensions (weights from the table above).
-Terminate when: composite >= 0.80, every dimension >= 0.60, unknowns == 0.
-
-### Inversion Probe
-
-Two architecture-specific questions:
-
-1. **Inversion**: "Given these architecture decisions, what scenario would cause a complete restructure even if every component works individually?"
-2. **Implication**: "You chose [most impactful decision]. Does that also mean [architectural consequence]?"
-
-If the probe reveals a critical issue (e.g., contradictory decisions, missing dimension coverage):
-- Record the issue as a `known_gap`
-- Re-enter the interview loop targeting the affected dimension(s)
-- Continue until termination criteria are met again
-
-### L2 Approval
-
-Present all decisions + constraints + activated extensions, then ask user to approve via AskUserQuestion (Approve / Revise / Abort).
-
-### Write to spec
-
-```markdown
-## L2: Architecture Decisions
-
-### Decisions
-
-| ID | Decision | Rationale | Assumed? |
-|----|----------|-----------|----------|
-| D1 | TypeScript + Node.js runtime | User preference, team familiarity | No |
-| D2 | REST + OpenAPI for API | Multi-client support, code-gen | No |
-| ... | ... | ... | ... |
-
-### Constraints
-
-- C1: pnpm workspace -- always use pnpm, never npm/yarn
-- C2: ...
-
-### Activated Extensions
-
-- [x] Type Contracts (OpenAPI + Orval)
-- [x] Data Layer (PostgreSQL + Prisma)
-- [ ] Docker/Infra (not needed)
-- [ ] Runtime Patterns (not needed)
-
-### Known Gaps
-
-- (none, or list gaps found during inversion probe)
-```
-
----
-
-## L3: Harness Setup
-
-**Output**: Harness section in scaffold-spec.md
-
-L3 determines the AI work environment for this project.
-
-### 3-1. Domain Context (interactive)
-
-```
-AskUserQuestion(
-  question: "Does this project have domain-specific terms or business rules?",
-  options: [
-    { label: "Yes, I'll describe them", description: "You'll provide domain terms and key business rules" },
-    { label: "None yet", description: "Skip -- can add later to CLAUDE.md" },
-    { label: "Agent decides", description: "Infer from project goal if possible" }
-  ]
-)
-```
-
-### 3-2. Team Context (interactive)
-
-```
-AskUserQuestion(
-  question: "Are there team conventions for commits, PRs, branching, or code review?",
-  options: [
-    { label: "Conventional Commits + GitHub Flow", description: "feat/fix/chore prefixes, feature branches, squash merge" },
-    { label: "Trunk-based development", description: "Short-lived branches, no long-running feature branches" },
-    { label: "Custom -- I'll describe", description: "You'll specify your team's rules" },
-    { label: "Solo project, no conventions", description: "Skip team context" }
-  ]
-)
-```
-
-### 3-3. Constraints -> Rules (auto + confirm)
-
-Scan L2 constraints and propose converting them to `.claude/rules/` files:
-
-```
-AskUserQuestion(
-  question: "Convert these constraints to .claude/rules/ for automatic enforcement?",
-  options: [
-    { label: "Yes, all of them", description: "All constraints become rules files" },
-    { label: "Let me pick", description: "Choose which constraints to enforce" },
-    { label: "Skip", description: "Keep constraints in spec only" }
-  ]
-)
-```
-
-### 3-3.5. CLAUDE.md Structure (Progressive Disclosure)
-
-CLAUDE.md should stay lean — put stable rules in `docs/` and link with explicit reading conditions.
-
-```markdown
-# {project}
-
-{3-5 lines: purpose, stack, directory map}
-
-## Context
-- Read `docs/domain.md` before changing business behavior.
-- Read `docs/policies.md` before commits or PRs.
-- Read `docs/architecture.md` before changing module boundaries.
-```
-
-Rationale: keep root instructions short and make reading conditions explicit.
-`@import` loads with its parent CLAUDE.md; it organizes files but does not defer their context cost.
-
-### 3-4. Skills Detection (auto-suggest + ask)
-
-**Start minimal.** Only scaffold skills that the L2 tech stack directly requires — unused skills may add noise. Include a skill when its recurring or rare critical purpose is clear, not to meet a usage quota.
-
-Scan L2 decisions for recurring task patterns and suggest project-specific skills:
-
-| L2 Decision Signal | Auto-Suggested Skill | Description |
-|-------------------|---------------------|-------------|
-| DB + ORM (Prisma, Drizzle, SQLAlchemy) | `/migrate` | Run migration + regenerate types |
-| DB detected | `/seed-data` | Generate development seed data |
-| Docker / docker-compose | `/deploy` | Build, push, run with health check |
-| API server (REST, GraphQL, tRPC) | `/api-test` | Test endpoint with curl/httpie |
-| Async workers (Celery, BullMQ) | `/worker-test` | Dispatch test task + verify result |
-| CLI binary (Rust, Go) | `/release` | Version bump + build + tag + publish |
-| Frontend framework | `/new-component` | Scaffold component + test + story |
-| Payment integration (Stripe, etc.) | `/test-webhook` | Forward + trigger webhook locally |
-
-```
-AskUserQuestion(
-  question: "These skills will be scaffolded based on your tech stack. Any other tasks you'll repeat frequently?",
-  options: [
-    { label: "These are enough", description: "Proceed with auto-suggested skills only" },
-    { label: "Add more", description: "I'll describe additional recurring tasks" },
-    { label: "Skip all skills", description: "Don't generate any project skills" }
-  ]
-)
-```
-
-### 3-5. Hooks Detection (auto + confirm)
-
-Auto-detect hooks from L2 tech stack decisions:
-
-| L2 Decision | Auto-Detected Hook | Type |
-|------------|-------------------|------|
-| TypeScript (tsconfig.json) | `tsc --noEmit` on Edit/Write to .ts | PostToolUse |
-| Prettier configured | `prettier --write` on Edit/Write | PostToolUse |
-| ESLint configured | `eslint --fix` on Edit/Write | PostToolUse |
-| Ruff / Black (Python) | `ruff format` on Edit/Write | PostToolUse |
-| rustfmt (Rust) | `rustfmt` on Edit/Write | PostToolUse |
-| gofmt (Go) | `gofmt -w` on Edit/Write | PostToolUse |
-| .env files will exist | Block Edit/Write to `.env*` | PreToolUse |
-| Lock files will exist | Block Edit/Write to lock files | PreToolUse |
-
-```
-AskUserQuestion(
-  question: "These hooks will be added to .claude/settings.json. Approve?",
-  options: [
-    { label: "Approve all", description: "Add all detected hooks" },
-    { label: "Let me pick", description: "Choose which hooks to enable" },
-    { label: "Skip hooks", description: "Don't set up any hooks" }
-  ]
-)
-```
-
-### Write to spec
-
-```markdown
-## L3: Harness Setup
-
-### Domain Context
-{domain terms and rules, or "None"}
-
-### Team Conventions
-{commit style, branching strategy, or "Solo project"}
-
-### Rules (from Constraints)
-| Constraint | Rule File | Status |
-|-----------|-----------|--------|
-| C1: pnpm only | `.claude/rules/pnpm-only.md` | Approved |
-| ... | ... | ... |
-
-### Skills
-| Skill | Description | Source |
-|-------|-------------|--------|
-| `/migrate` | Run migration + regenerate types | D3 (Prisma) |
-| ... | ... | ... |
-
-### Hooks
-| Hook | Type | Trigger |
-|------|------|---------|
-| `tsc --noEmit` | PostToolUse | Edit/Write .ts files |
-| ... | ... | ... |
-```
-
-### L3 Gate
-
-Present harness summary -> AskUserQuestion (Approve / Revise / Abort).
-
----
-
-## L4: Plan (Requirements + Tasks)
-
-**Output**: Plan section in scaffold-spec.md
-
-L4 unifies requirements derivation and task generation in one step.
-
-### Step 1: Derive Requirements
-
-**Code Requirements (from L2):**
-
-```
-R1: "Code Structure -- Project directories, base configs, and a complete vertical slice exemplar"
-  R1.1: "Directory structure follows [framework] conventions with clear layer separation"
-  R1.2: "Vertical slice exemplar implements one complete flow (route -> service -> data -> test) with importable utilities (logger, config, errors)"
-  R1.3: "All exemplar utilities are importable modules, not inline code"
-
-R2: "Test Infrastructure -- Framework setup with patterns matching the exemplar"
-  R2.1: "[Test framework] configured with [runner] and example test matching exemplar flow"
-  R2.2: "Test directory structure mirrors source structure"
-
-R3: "Guard Rails -- CLAUDE.md + enforcement mechanisms for drift resistance"
-  R3.1: "CLAUDE.md (lean — under ~80 lines) with architectural rules, domain context, team conventions, dependency direction, file placement conventions, available project skills summary, and active hooks summary. Stable long-form content lives in `docs/` and is linked with explicit reading conditions."
-  R3.2: "Linter + formatter configured with project-specific rules"
-  R3.3: "CI pipeline running lint + typecheck + test"
-  R3.4: ".env.example with all required environment variables documented"
-```
-
-**Conditional Code Extensions (from L2):**
-
-```
-R4: "Type Contracts -- Schema-driven type safety across client-server boundary" (if activated)
-R5: "Data Layer -- Database connection, schema management, and seed data" (if activated)
-R6: "Docker/Infra -- Containerized local development environment" (if activated)
-R7: "Runtime Patterns -- Production-readiness baseline for long-running server" (if activated)
-```
-
-**Harness Requirements (from L3):**
-
-```
-R8: "Project Rules -- Constraints converted to .claude/rules/" (if approved)
-R9: "Domain Skills -- Project-specific repeatable task recipes" (if approved)
-R10: "Project Hooks -- Automated code quality enforcement" (if approved)
-```
-
-### Step 2: Derive Tasks
-
-**Task DAG:**
-
-```
-T1: Project initialization (package.json, tsconfig, base configs)
-    fulfills: [R1]
-
-T2: Guard Rails setup (CLAUDE.md, lint, format, CI, .env.example, .claude/rules/)
-    fulfills: [R3] + [R8 if approved]
-    depends_on: [T1]
-
-T4: Test infrastructure (test config, test dirs, path aliases -- framework setup only)
-    fulfills: [R2]
-    depends_on: [T1]
-
-T3: Vertical slice exemplar (THE reference implementation + exemplar test)
-    fulfills: [R1]
-    depends_on: [T2, T4]
-    <-- THIS IS THE MOST IMPORTANT TASK
-
---- Conditional code tasks (parallel where possible) ---
-
-T5: Type Contracts setup (if R4)     fulfills: [R4]  depends_on: [T3]
-T6: Data Layer setup (if R5)         fulfills: [R5]  depends_on: [T1]
-T7: Docker/Infra setup (if R6)       fulfills: [R6]  depends_on: [T1]
-T8: Runtime Patterns (if R7)         fulfills: [R7]  depends_on: [T3]
-
---- Harness tasks ---
-
-T_SKILL: Domain Skills generation (if R9)
-    fulfills: [R9]  depends_on: [T3]
-
-T_HOOK: Project Hooks setup (if R10)
-    fulfills: [R10] depends_on: [T1]
-
-TF: Scaffold verification
-    depends_on: all above
-```
-
-### T3: Vertical Slice Exemplar (Critical Task)
-
-The exemplar is the scaffold's highest-value output. It must demonstrate:
-
-1. **The complete flow** -- from entry point to data layer and back
-2. **Importable utilities** -- `lib/logger.ts`, `lib/config.ts`, `lib/errors.ts` (not inline)
-3. **The naming convention** -- how files, functions, and variables are named
-4. **The test pattern** -- how to test this flow
-5. **Error handling** -- how errors propagate through layers
-6. **Type safety** -- how types flow across boundaries
-
-The exemplar answers: "If an agent reads only this one feature, can it build the next feature correctly?"
-
-### TF: Scaffold Verification
-
-```
-Steps:
-- Build: all build/lint/typecheck commands pass
-- Tests: all exemplar tests pass
-- CLAUDE.md: includes architectural rules + domain context + team conventions + available skills + active hooks
-- Rules: .claude/rules/ files match selected constraints from L3
-- Exemplar: vertical slice is complete (entry -> data -> response -> test)
-- Utilities: logger, config, errors are importable and used in exemplar
-- Skills: each generated skill has valid SKILL.md with project-specific commands
-- Hooks: .claude/settings.json hooks reference correct tool commands
-- Agent test: could an agent read this codebase AND its harness and build a new feature consistently?
-```
-
-### Write to spec
-
-```markdown
-## L4: Plan
-
-### Requirements
-
-| ID | Requirement | Source | Conditional? |
-|----|------------|--------|-------------|
-| R1 | Code Structure | L2 | No |
-| R2 | Test Infrastructure | L2 | No |
-| R3 | Guard Rails | L2 | No |
-| R4 | Type Contracts | L2 | If activated |
-| ... | ... | ... | ... |
-
-### Task DAG
-
-| ID | Task | Fulfills | Depends On | Status |
-|----|------|----------|------------|--------|
-| T1 | Project init | R1 | - | pending |
-| T2 | Guard Rails | R3, R8 | T1 | pending |
-| T4 | Test infra | R2 | T1 | pending |
-| T3 | Vertical slice exemplar | R1 | T2, T4 | pending |
-| ... | ... | ... | ... | ... |
-| TF | Verification | - | all | pending |
-
-### Quality Criteria
-
-- Agent extensibility: vertical slice exemplar (T3)
-- Testability: test infrastructure + exemplar tests (T4)
-- Drift resistance: CLAUDE.md + rules + lint + CI (T2)
-- Type safety: [type contract strategy] (T5)
-- Cross-session continuity: CLAUDE.md with domain/team context (T2)
-- Task automation: domain skills (T_SKILL)
-- Code quality enforcement: project hooks (T_HOOK)
-```
-
-### L4 Gate
-
-Present full plan summary, then:
-
-```
-AskUserQuestion(
-  question: "Review the scaffold plan above.",
-  options: [
-    { label: "Approve", description: "Plan looks good" },
-    { label: "Revise architecture (L2)", description: "Change architecture decisions" },
-    { label: "Revise harness (L3)", description: "Change harness setup" },
-    { label: "Revise plan (L4)", description: "Adjust requirements or tasks" },
-    { label: "Abort", description: "Stop" }
-  ]
-)
-```
-
----
-
-## Final Step: Next Action
-
-After the user approves the full plan at L4, ask:
-
-```
-AskUserQuestion(
-  question: "scaffold-spec.md is ready. What would you like to do?",
-  options: [
-    { label: "Implement now", description: "Start scaffolding the project based on this spec" },
-    { label: "Later", description: "Save the spec and implement in a future session" }
-  ]
-)
-```
-
-- If **Implement now**: proceed with task execution following the Task DAG order.
-- If **Later**: confirm the spec file location and end.
-
-### After Implementation: Establish Harness Baseline
-
-Once TF (verification) passes, suggest running `/check-harness` to establish a readiness baseline for the new project. This closes the scaffold → audit → compound loop.
-
-```
-AskUserQuestion(
-  question: "Run /check-harness now to baseline the new harness?",
-  options: [
-    { label: "Yes, baseline now", description: "Check project readiness and save a Markdown report in a fresh temporary directory" },
-    { label: "Skip", description: "Baseline later" }
-  ]
-)
-```
-
----
-
-## User Approval Protocol
-
-Three approval gates (L2, L3, L4). Same pattern at each:
-
-```
-AskUserQuestion(
-  question: "Review the {items} above. Ready to proceed?",
-  options: [
-    { label: "Approve", description: "Looks good -- proceed to next layer" },
-    { label: "Revise", description: "I want to change something" },
-    { label: "Abort", description: "Stop specification" }
-  ]
-)
-```
-
----
-
-## Checklist Before Stopping
-
-- [ ] scaffold-spec.md exists in project directory
-- [ ] confirmed_goal is architecture-framed (not feature-framed)
-- [ ] Non-goals include "feature implementation" or similar
-- [ ] L2: decisions cover all 5 architecture dimensions
-- [ ] L2: Conditional extensions detected and recorded
-- [ ] L3: Applicable harness decisions (domain, team, rules, skills, hooks)
-- [ ] L3: Constraints -> rules conversion offered to user
-- [ ] L3: Skills auto-suggested from tech stack + user input
-- [ ] L3: Hooks auto-detected from formatter/linter choices
-- [ ] L4: Requirements include Code (R1-R3) + Conditional (R4-R7) + Harness (R8-R10)
-- [ ] R1 includes mandatory vertical slice exemplar requirement
-- [ ] R3.1 CLAUDE.md includes domain context, team conventions, available skills, active hooks
-- [ ] T3 (exemplar) includes importable utilities (logger, config, errors)
-- [ ] T_SKILL produces skills with project-specific commands (not generic placeholders)
-- [ ] T_HOOK produces hooks matching actual L2 tooling decisions
-- [ ] TF includes agent extensibility + harness check
-- [ ] Plan Summary presented to user
-- [ ] Final AskUserQuestion: "Implement now" vs "Later"
+Derive requirements and tasks from the selected architecture and harness.
+Use framework-appropriate filenames, not a hard-coded TypeScript skeleton.
+
+| Requirement | Outcome |
+|-------------|---------|
+| R1 | Foundation and one complete reference flow using the actual selected boundaries |
+| R2 | Tests with expectations from the agreed behavior and a repeatable test environment |
+| R3 | Concise instructions, appropriate quality checks, a common local/CI verification entrypoint, and configuration validation |
+| R4, if selected | Shared type/API contracts |
+| R5, if selected | Real data layer, schema/migrations, seed and reset policy |
+| R6, if selected | Container/service environment |
+| R7, if selected | Runtime health and shutdown behavior |
+| R8, if selected | Scoped instructions without duplication |
+| R9, if selected | Project-specific task skills |
+| R10, if selected | Hooks with defined inputs, scope, failure behavior, and checks |
+
+If environment variables are required, use the framework's configuration schema/registry and startup validation.
+Keep required/optional keys, shapes, and missing-value behavior in code; required keys have no silent fallback.
+Keep the example aligned with that source, with placeholders only, and prevent secret values from entering reports/logs.
+Do not invent environment variables or custom configuration abstractions when the framework already provides the needed contract.
+
+### Task Dependencies
+
+| Task | Fulfills | Depends on |
+|------|----------|------------|
+| T1: Initialize selected framework, or adapt existing foundation | R1 | Scope and required decisions resolved |
+| T2: Instructions, applicable quality tools, configuration, common verification command and CI wiring | R3, R8 | T1 |
+| T4: Test framework and isolated test environment | R2 | T1; T6/T7 if the test environment needs them |
+| T5: Type/API contract foundation, if selected | R4 | T1 |
+| T7: Container/service setup, if selected | R6 | T1 |
+| T6: Data layer and schema, if selected | R5 | T1; T7 if required to run the database |
+| T3: Complete reference flow and behavioral tests | R1, R2 | T2, T4; T5 if R4; T6 if R5; T7 when needed to run |
+| T8: Selected runtime behavior | R7 | T3 |
+| T_SKILL: Useful task skills with real commands | R9 | T3 |
+| T_HOOK: Selected hooks and fixtures | R10 | T2, T4; referenced commands/scripts must exist first |
+| TF: Foundation and harness verification | All applicable requirements | All selected tasks |
+
+Adapt dependencies to actual tool requirements.
+A generated API client also needs its generation task before the reference flow uses it.
+Do not build the exemplar against a disposable stub and replace it with the chosen data/contract foundation later.
+For an existing project, satisfy requirements with verified existing capabilities where possible rather than recreating them.
+
+### Reference Flow
+
+Demonstrate an actual entry point, the selected processing/data boundary, an observable result, and a meaningful failure case.
+Show naming, error propagation, tests, and reusable framework capabilities.
+Use real persistence and contracts when those were selected.
+Do not require a data layer for a CLI that does not need one.
+The question is: "Can the next feature follow this working example?"
+
+For each task record its requirement, dependencies, acceptance evidence, and status.
+Present the plan and unresolved scope choices for review.
+If implementation is already requested, proceed within that authorization.
+If the user requested a plan only, finish the plan and stop without asking again about implementation.
+Ask whether to implement now or save the plan only when that choice has not yet been supplied.
+
+## Implementation and Verification
+
+Execute selected tasks in dependency order.
+Read [references/verification.md](references/verification.md) before TF and follow the applicable checks.
+Do not mark tasks done merely because their files exist.
+
+The report records:
+
+- Each requirement and actual command or observation.
+- Result: VERIFIED, FAILED, NOT_RUN, BLOCKED, or N/A with a reason.
+- Evidence paths, relevant source revision/state, and independent reviewer involvement if any.
+- Remaining issues and the concrete next step.
+
+Required checks must pass before declaring the scaffold complete.
+If blocked, preserve completed work, mark the spec blocked, and explain what remains; do not hide missing verification as N/A.
+Optional unrun checks must remain visible.
+Separate local execution, actual Hook events, remote CI, and published/deployed state.
+
+After verified implementation, suggest `/check-harness --verify` if installed and useful.
+It is an optional broader audit, not a replacement for TF or a mandatory sibling dependency.
+Do not repeat checks already proven without a concrete reason.
+
+## Before Finishing
+
+- Preserve the user's plan-only vs implementation choice.
+- Ensure the spec reflects actual decisions, selected extensions, omissions, and task dependencies.
+- Ensure no existing project files or previous spec were silently replaced.
+- Ensure instructions, skills, hooks, and documentation refer to real project commands and paths.
+- For implementation, record actual reference-flow and harness checks with evidence and honest limitations.
+- Do not claim installation, independent review, remote CI, or deployment that was not performed.

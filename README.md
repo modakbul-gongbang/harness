@@ -10,9 +10,21 @@ AI 에이전트가 잘 일하는 환경을 설계하는 기술 - Harness Enginee
 | Skill | 설명 | 사용법 |
 |-------|------|--------|
 | **check-harness** | 개발 환경·컨텍스트·Hook·검증 체계 종합 점검 + 근거 기반 개선 권장 | `/check-harness` |
-| **scaffold** | Greenfield 프로젝트에 AI-optimized 하네스 구조를 스캐폴딩 | `/scaffold` |
+| **scaffold** | 기술·의존성 선택부터 동작하는 기준 예제와 하네스 구성까지 계획·구현 | `/scaffold` |
 | **specify** | 목표를 구조화된 구현 계획(spec.md)으로 변환 | `/specify "목표"` |
 | **deep-interview** | Socratic 방식의 요구사항 인터뷰 (Ambiguity Score 기반) | `/deep-interview "주제"` |
+
+## Scaffold 사용 범위
+
+`/scaffold`는 언어·프레임워크·DB·라이브러리를 프로젝트 요구와 기존 팀 환경에 맞춰 선택하고, 구조와 하네스를 계획한 뒤 요청에 따라 실제 구현까지 진행한다.
+설치된 도구만으로 기술을 결정하지 않으며, 새 의존성의 공식 호환성 근거와 실제 빌드 결과를 구분한다.
+기존 프로젝트에서는 현재 구조와 작업 중인 파일을 보존하고 합의한 범위만 보강한다.
+작은 프로젝트는 필요한 선택만 묻고, 계획만 요청했다면 구현하지 않는다.
+
+구현 결과는 선택한 DB·API 계약을 사용하는 기준 예제 하나와 테스트, 실제 실행·검증 명령, 필요한 지침·스킬·Hook이다.
+검증 보고서는 실제 실행 결과와 미확인 항목을 구분하며, Hook fixture 통과를 runtime 활성화 성공으로 쓰지 않는다.
+필요한 UI 검증이 막혔다면 완료로 보고하지 않는다.
+절차는 [scaffold SKILL.md](skills/scaffold/SKILL.md), 세부 검증 기준은 [verification.md](skills/scaffold/references/verification.md), 지시 준수 점검 사례는 [evals.json](skills/scaffold/evals/evals.json)에 있다.
 
 ## Materials
 
